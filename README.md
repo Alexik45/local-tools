@@ -70,7 +70,7 @@ local_tools/
     data.js
     pdf.js
     files.js
-
+```
 ## Technology Stack
 
 * Core: Semantic HTML5, CSS Grid, Flexbox, Vanilla ES6+ JavaScript
@@ -90,7 +90,7 @@ This project consists entirely of static assets and requires no compilation step
 git clone [https://github.com/Alexik45/local_tools.git](https://github.com/Alexik45/local_tools.git)
 cd local_tools
 
-```
+
 
 2. Serve locally with any static web server:
 

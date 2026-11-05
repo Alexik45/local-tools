@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Files & Archives Studio - tools://local</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="brand">tools://local</a>
+    <nav>
+      <a href="images.html">Images</a>
+      <a href="videos.html">Videos</a>
+      <a href="audio.html">Audio</a>
+      <a href="data.html">Data</a>
+      <a href="pdf.html">PDF</a>
+      <a href="files.html" class="active">Files</a>
+      <button id="theme-toggle" class="theme-toggle">LIGHT</button>
+    </nav>
+  </header>
+
+  <div class="mode-switcher" style="padding: 12px 24px 0 24px; margin-bottom: 0;">
+    <button class="mode-btn active" data-mode="converter">FAST CONVERTER</button>
+    <button class="mode-btn" data-mode="studio">ADVANCED STUDIO</button>
+  </div>
+
+  <main class="container" id="view-converter">
+    <h1 class="page-title">ZIP Fast Packager</h1>
+    <p class="page-desc">Select multiple files and package them into an uncompressed or deflated ZIP bundle.</p>
+
+    <div class="workspace-panel">
+      <div class="dropzone" id="conv-zip-drop">
+        <input type="file" id="conv-zip-input" multiple style="display: none;">
+        <p>Drop files here to create .zip archive</p>
+      </div>
+
+      <div class="row">
+        <label>Archive Name:</label>
+        <input type="text" id="archive-filename" value="bundle" style="width: 160px;">
+        <span style="color: var(--muted); font-size: 11px;">.zip</span>
+        <button class="btn-action" id="btn-build-zip">Bundle ZIP</button>
+      </div>
+    </div>
+  </main>
+
+  <main class="container" id="view-studio" style="display: none;">
+    <h1 class="page-title">Hex & Binary Inspector</h1>
+    <p class="page-desc">In-memory byte-level hexadecimal stream visualizer and chunk carver.</p>
+
+    <div class="workspace-panel">
+      <div class="dropzone" id="studio-hex-drop">
+        <input type="file" id="studio-hex-input" style="display: none;">
+        <p>Drop any file to inspect binary structure and compute hashes</p>
+      </div>
+
+      <div id="studio-hex-panel" style="display: none;">
+        <div class="row">
+          <div class="num-group">
+            <span>Split Chunk (KB):</span>
+            <input type="number" id="chunk-size" value="256" min="1">
+          </div>
+          <button class="btn-action" id="btn-split-file">Carve into Parts</button>
+          <button class="btn-action" id="btn-calc-sha">Generate SHA-256</button>
+        </div>
+        <div id="hex-meta-info" style="color: var(--muted); font-size: 12px; margin: 10px 0;"></div>
+        <pre id="hex-stream-dump" style="background: var(--code-bg); border: 1px solid var(--border); padding: 12px; font-size: 11px; height: 320px; overflow-y: auto;"></pre>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/common.js"></script>
+  <script src="js/files.js"></script>
+</body>
+</html>

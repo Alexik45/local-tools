@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Web Tools</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="brand">tools://local</a>
+    <nav>
+      <a href="images.html">Images</a>
+      <a href="videos.html">Videos</a>
+      <a href="audio.html">Audio</a>
+      <a href="data.html">Data</a>
+      <a href="pdf.html">PDF</a>
+      <a href="files.html">Files</a>
+      <button id="theme-toggle" class="theme-toggle">LIGHT</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Client-Side Utilities</h1>
+    <p class="page-desc">In-browser file manipulation and processing. Fast, private, no cloud storage.</p>
+
+    <div class="grid">
+      <a href="images.html" class="card">
+        <div>
+          <div class="card-header-row">
+            <span class="card-title">Image Studio</span>
+            <span class="tool-tag">STUDIO</span>
+          </div>
+          <p class="card-desc">Batch format transcoder and full-screen Canva-style editor with freeform layers, typography, and filters.</p>
+        </div>
+        <div class="card-footer-tags">WEBP · PNG · JPG · SVG · CANVA SUITE</div>
+      </a>
+
+      <a href="videos.html" class="card">
+        <div>
+          <div class="card-header-row">
+            <span class="card-title">Video Tools</span>
+            <span class="tool-tag">STUDIO</span>
+          </div>
+          <p class="card-desc">Fast audio ripper, screen recorder, and timeline workbench with frame stepping and live filters.</p>
+        </div>
+        <div class="card-footer-tags">MP4 · WEBM · TRIM · STORYBOARD · REC</div>
+      </a>
+
+      <a href="audio.html" class="card">
+        <div>
+          <div class="card-header-row">
+            <span class="card-title">Audio DSP</span>
+            <span class="tool-tag">STUDIO</span>
+          </div>
+          <p class="card-desc">Lossless 16-bit WAV transcoder, interactive waveform trimmer, peak normalizer, and signal synth.</p>
+        </div>
+        <div class="card-footer-tags">WAV · MP3 · TRIM · NORMALIZE · SYNTH</div>
+      </a>
+
+      <a href="data.html" class="card">
+        <div>
+          <div class="card-header-row">
+            <span class="card-title">Data & Crypto</span>
+            <span class="tool-tag">STUDIO</span>
+          </div>
+          <p class="card-desc">JSON/CSV bidirectional converter, cryptographic SHA digests, and interactive matrix spreadsheet.</p>
+        </div>
+        <div class="card-footer-tags">SHA · JSON/CSV · JWT · BASE64 · MATRIX</div>
+      </a>
+
+      <a href="pdf.html" class="card">
+        <div>
+          <div class="card-header-row">
+            <span class="card-title">PDF Studio</span>
+            <span class="tool-tag">STUDIO</span>
+          </div>
+          <p class="card-desc">Client-side document merging, page range extraction, visual watermark stamper, and image compile.</p>
+        </div>
+        <div class="card-footer-tags">PDF · MERGE · SPLIT · STAMP · IMAGES</div>
+      </a>
+
+      <a href="files.html" class="card">
+        <div>
+          <div class="card-header-row">
+            <span class="card-title">Files & Archives</span>
+            <span class="tool-tag">STUDIO</span>
+          </div>
+          <p class="card-desc">In-memory ZIP archive packager, byte-level hexadecimal stream inspector, and chunk splitter.</p>
+        </div>
+        <div class="card-footer-tags">ZIP · HEX · HASH · CHUNKS · BYTES</div>
+      </a>
+    </div>
+
+    <div class="panel" id="vault-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div class="card-title">Local Session Vault</div>
+        <button class="btn-action" id="vault-toggle" style="padding: 4px 10px; font-size: 11px;">Enable Storage</button>
+      </div>
+      <p class="card-desc" id="vault-desc">Stores exported file history offline in browser memory. No trackers, no server syncing.</p>
+      <div id="vault-history" style="display: none; margin-top: 14px;">
+        <div class="section-title">RECENT ACTIVITY</div>
+        <div id="vault-list" class="vault-items">
+          <div style="color: var(--muted); font-size: 12px;">No export activity recorded yet.</div>
+        </div>
+        <button id="clear-vault" style="background: transparent; border: none; color: var(--muted); font-family: inherit; font-size: 11px; cursor: pointer; margin-top: 10px; text-decoration: underline;">Clear history</button>
+      </div>
+    </div>
+
+    <div class="contact-wrap">
+      <div class="section-title">CONTACT AND SUPPORT</div>
+      <div class="contact-grid">
+        <a href="https://ko-fi.com/alexik45#setGoalModal" target="_blank" rel="noopener noreferrer" class="contact-card highlight">
+          <div class="contact-details">
+            <span class="contact-type">DIRECT DONATION</span>
+            <span class="contact-value">ko-fi.com/alexik45</span>
+          </div>
+          <span class="action-tag">Support on Ko-fi</span>
+        </a>
+
+        <div class="contact-card" id="discord-card">
+          <div class="contact-details">
+            <span class="contact-type">COMMUNITY</span>
+            <span class="contact-value">alex1k45</span>
+          </div>
+          <button type="button" class="action-tag" id="copy-discord-btn">Copy Tag</button>
+        </div>
+
+        <div class="contact-card" id="email-card">
+          <div class="contact-details">
+            <span class="contact-type">INQUIRIES</span>
+            <span class="contact-value">contact.alexandr@proton.me</span>
+          </div>
+          <button type="button" class="action-tag" id="open-email-modal">Contact</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="email-modal" class="modal-backdrop">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div class="card-title">Developer Inquiries</div>
+        <button id="close-modal" class="modal-close">&times;</button>
+      </div>
+      <p class="card-desc" style="margin-bottom: 16px;">Reach out for bug reports, tooling suggestions, or collaboration.</p>
+      <div class="row" style="margin-bottom: 16px;">
+        <input type="text" id="email-address-val" value="contact.alexandr@proton.me" readonly style="flex: 1;">
+        <button class="btn-action" id="copy-email-btn">Copy Address</button>
+      </div>
+      <div class="row">
+        <a href="mailto:contact.alexandr@proton.me" class="btn-action" style="text-align: center; width: 100%;">Open Native Mail App</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-meta">
+      <span>tools://local</span>
+      <span>MIT License</span>
+      <span>100% RAM Processing</span>
+    </div>
+  </footer>
+
+  <script src="js/common.js"></script>
+</body>
+</html>

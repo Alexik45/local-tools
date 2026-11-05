@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Tools & Studio - tools://local</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="brand">tools://local</a>
+    <nav>
+      <a href="images.html">Images</a>
+      <a href="videos.html" class="active">Videos</a>
+      <a href="audio.html">Audio</a>
+      <a href="data.html">Data</a>
+      <a href="pdf.html">PDF</a>
+      <a href="files.html">Files</a>
+      <button id="theme-toggle" class="theme-toggle">LIGHT</button>
+    </nav>
+  </header>
+
+  <div class="mode-switcher" style="padding: 12px 24px 0 24px; margin-bottom: 0;">
+    <button class="mode-btn active" data-mode="converter">FAST CONVERTER</button>
+    <button class="mode-btn" data-mode="studio">ADVANCED STUDIO</button>
+  </div>
+
+  <main class="container" id="view-converter">
+    <h1 class="page-title">Video Fast Tools</h1>
+    <p class="page-desc">High-speed client-side track extraction and real-time screen capture.</p>
+
+    <div class="workspace-panel">
+      <div class="dropzone" id="conv-video-drop">
+        <input type="file" id="conv-video-input" accept="video/*" style="display: none;">
+        <p>Drop video here for instant track extraction</p>
+      </div>
+
+      <div class="row">
+        <button class="btn-action" id="btn-extract-wav">Extract Raw WAV Audio</button>
+        <button class="btn-action" id="btn-record-screen">Record Screen to WebM</button>
+      </div>
+      <div id="conv-video-status" style="color: var(--muted); font-size: 11px; margin-top: 8px;"></div>
+    </div>
+  </main>
+
+  <main class="container" id="view-studio" style="display: none;">
+    <h1 class="page-title">Video Studio Workbench</h1>
+    <p class="page-desc">Frame-stepping canvas inspector, numeric selection trimmer, and filter passes.</p>
+
+    <div class="workspace-panel">
+      <div class="dropzone" id="studio-video-drop">
+        <input type="file" id="studio-video-input" accept="video/*" style="display: none;">
+        <p>Drop video file to mount player workbench</p>
+      </div>
+
+      <div id="video-workbench" style="display: none;">
+        <div class="row" style="justify-content: center;">
+          <video id="player-video" controls style="max-height: 320px; width: 100%; max-width: 720px; background: #000;"></video>
+        </div>
+
+        <div class="row" style="margin-top: 14px;">
+          <div class="num-group">
+            <span>Trim Start:</span>
+            <input type="number" id="v-trim-start" value="0.00" step="0.1" min="0">
+            <span>s</span>
+          </div>
+          <div class="num-group">
+            <span>Trim End:</span>
+            <input type="number" id="v-trim-end" value="5.00" step="0.1" min="0.1">
+            <span>s</span>
+          </div>
+          <button class="btn-action" id="btn-test-loop">Loop Range</button>
+          <button class="btn-action" id="btn-step-prev">-1 Frame</button>
+          <button class="btn-action" id="btn-step-next">+1 Frame</button>
+        </div>
+
+        <div class="row" style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px;">
+          <label>Capture Frame:</label>
+          <button class="btn-action" id="btn-snap-png">Export PNG</button>
+          <button class="btn-action" id="btn-snap-webp">Export WebP</button>
+          <button class="btn-action" id="btn-snap-jpg">Export JPG</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/common.js"></script>
+  <script src="js/videos.js"></script>
+</body>
+</html>

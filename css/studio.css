@@ -1,0 +1,223 @@
+.studio-fullscreen-layout {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 50px);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #08090b;
+}
+
+.studio-sub-topbar {
+  height: 44px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 25;
+}
+
+.studio-sub-left, .studio-sub-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sub-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.sub-btn:hover {
+  border-color: var(--accent);
+}
+
+.btn-export-accent {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 14px;
+  cursor: pointer;
+}
+
+.btn-export-accent:hover {
+  background: var(--accent-hover);
+}
+
+.studio-main-body {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.dock-sidebar {
+  width: 64px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 6px;
+  z-index: 20;
+}
+
+.dock-tab-btn {
+  width: 56px;
+  height: 52px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: inherit;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.dock-tab-btn:hover, .dock-tab-btn.active {
+  color: var(--text);
+  border-color: var(--border);
+  background: var(--code-bg);
+}
+
+.drawer-shelf {
+  width: 290px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 16px;
+  overflow-y: auto;
+  z-index: 15;
+}
+
+.drawer-header {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.drawer-sub-sep {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin: 16px 0 8px 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.canvas-viewport-area {
+  flex: 1;
+  background: #050607;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.fabric-stage-wrapper {
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.85);
+}
+
+.media-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.media-thumb-item {
+  aspect-ratio: 1;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-thumb-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.media-thumb-item:hover {
+  border-color: var(--accent);
+}
+
+.studio-bottom-deck {
+  height: 64px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  justify-content: space-between;
+  z-index: 25;
+}
+
+.studio-ctx-menu {
+  position: fixed;
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  z-index: 10000;
+  min-width: 180px;
+  padding: 4px 0;
+  font-family: var(--font-mono);
+  user-select: none;
+}
+
+.studio-ctx-menu.visible {
+  display: block;
+}
+
+.ctx-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 14px;
+  font-size: 11px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.ctx-entry span {
+  color: var(--muted);
+  font-size: 10px;
+  margin-left: 16px;
+}
+
+.ctx-entry:hover {
+  background: var(--code-bg);
+  color: var(--accent);
+}
+
+.ctx-entry.ctx-danger:hover {
+  color: #ff5555;
+}
+
+.ctx-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}

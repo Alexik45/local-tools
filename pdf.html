@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Studio & Tools - tools://local</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="brand">tools://local</a>
+    <nav>
+      <a href="images.html">Images</a>
+      <a href="videos.html">Videos</a>
+      <a href="audio.html">Audio</a>
+      <a href="data.html">Data</a>
+      <a href="pdf.html" class="active">PDF</a>
+      <a href="files.html">Files</a>
+      <button id="theme-toggle" class="theme-toggle">LIGHT</button>
+    </nav>
+  </header>
+
+  <div class="mode-switcher" style="padding: 12px 24px 0 24px; margin-bottom: 0;">
+    <button class="mode-btn active" data-mode="converter">FAST CONVERTER</button>
+    <button class="mode-btn" data-mode="studio">ADVANCED STUDIO</button>
+  </div>
+
+  <main class="container" id="view-converter">
+    <h1 class="page-title">PDF Fast Converter</h1>
+    <p class="page-desc">Bundle images directly into a single compiled PDF file.</p>
+
+    <div class="workspace-panel">
+      <div class="dropzone" id="conv-pdf-drop">
+        <input type="file" id="conv-pdf-input" accept="image/jpeg,image/png" multiple style="display: none;">
+        <p>Drop JPG/PNG images here to bundle into PDF</p>
+      </div>
+      <button class="btn-action" id="btn-compile-pdf">Create PDF Document</button>
+    </div>
+  </main>
+
+  <main class="container" id="view-studio" style="display: none;">
+    <h1 class="page-title">PDF Advanced Studio</h1>
+    <p class="page-desc">Merge multiple PDF files, stamp custom watermark overlays, or split page ranges.</p>
+
+    <div class="workspace-panel">
+      <div class="dropzone" id="studio-pdf-drop">
+        <input type="file" id="studio-pdf-input" accept="application/pdf" multiple style="display: none;">
+        <p>Drop PDF files here to edit or merge</p>
+      </div>
+
+      <div id="studio-pdf-ctrls" style="display: none;">
+        <div class="row">
+          <button class="btn-action" id="btn-merge-pdfs">Merge All Loaded PDFs</button>
+          <div class="num-group" style="margin-left: 14px;">
+            <span>Extract Pages:</span>
+            <input type="text" id="split-range-input" placeholder="e.g. 1-2, 4" style="width: 100px;">
+          </div>
+          <button class="btn-action" id="btn-extract-pdf">Extract</button>
+        </div>
+
+        <div class="row" style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px;">
+          <label>Watermark:</label>
+          <input type="text" id="wm-text" value="CONFIDENTIAL" style="width: 160px;">
+          <input type="number" id="wm-size" value="38" min="10" max="100">
+          <button class="btn-action" id="btn-stamp-pdf">Apply Watermark & Export</button>
+        </div>
+        <div id="pdf-feedback" style="color: var(--muted); font-size: 11px; margin-top: 10px;"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/common.js"></script>
+  <script src="js/pdf.js"></script>
+</body>
+</html>

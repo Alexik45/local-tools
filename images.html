@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Studio & Tools - tools://local</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/studio.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="brand">tools://local</a>
+    <nav>
+      <a href="images.html" class="active">Images</a>
+      <a href="videos.html">Videos</a>
+      <a href="audio.html">Audio</a>
+      <a href="data.html">Data</a>
+      <a href="pdf.html">PDF</a>
+      <a href="files.html">Files</a>
+      <button id="theme-toggle" class="theme-toggle">LIGHT</button>
+    </nav>
+  </header>
+
+  <div class="mode-switcher" style="padding: 12px 24px 0 24px; margin-bottom: 0;">
+    <button class="mode-btn active" data-mode="converter">FAST CONVERTER</button>
+    <button class="mode-btn" data-mode="studio">ADVANCED STUDIO</button>
+  </div>
+
+  <!-- REŽIM 1: FAST CONVERTER -->
+  <main class="container" id="view-converter">
+    <h1 class="page-title">Image Fast Converter</h1>
+    <p class="page-desc">High-speed client-side batch format conversion and compression.</p>
+
+    <div class="workspace-panel">
+      <div class="dropzone" id="conv-dropzone">
+        <input type="file" id="conv-file-input" accept="image/*" multiple style="display: none;">
+        <p>Drop images here or click to batch transcode</p>
+      </div>
+
+      <div class="row">
+        <label>Format:</label>
+        <select id="conv-format">
+          <option value="image/webp">WebP (Modern Compact)</option>
+          <option value="image/png">PNG (Lossless)</option>
+          <option value="image/jpeg">JPG (Standard)</option>
+        </select>
+
+        <div class="num-group">
+          <span>Quality:</span>
+          <input type="number" id="conv-quality-num" value="90" min="5" max="100" style="width: 60px;">
+          <span>%</span>
+        </div>
+
+        <button class="btn-action" id="btn-run-batch">Convert and Download All</button>
+      </div>
+      <div id="conv-feedback" style="color: var(--muted); font-size: 11px; margin-top: 8px;"></div>
+    </div>
+  </main>
+
+  <!-- REŽIM 2: ADVANCED STUDIO (CANVA SUITE) -->
+  <div id="view-studio" style="display: none;">
+    <div class="studio-fullscreen-layout">
+
+      <div class="studio-sub-topbar">
+        <div class="studio-sub-left">
+          <input type="text" id="project-title" value="Project_Design_1" style="width: 160px; font-weight: 700;">
+          <div class="num-group" style="margin-left: 8px;">
+            <span>Canvas:</span>
+            <input type="number" id="canvas-width" value="1280" style="width: 64px;">
+            <span>&times;</span>
+            <input type="number" id="canvas-height" value="720" style="width: 64px;">
+            <button class="sub-btn" id="btn-resize-canvas">Resize</button>
+          </div>
+        </div>
+
+        <div class="studio-sub-right">
+          <button class="sub-btn" id="btn-undo">&#8630; Undo</button>
+          <button class="sub-btn" id="btn-redo">&#8631; Redo</button>
+          <button class="sub-btn" id="btn-clear-canvas" style="color: #ff5555;">Clear</button>
+          <button class="btn-export-accent" id="btn-open-export">Export Artwork</button>
+        </div>
+      </div>
+
+      <div class="studio-main-body">
+
+        <aside class="dock-sidebar">
+          <button class="dock-tab-btn active" data-tab="tab-uploads">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>Uploads</span>
+          </button>
+          <button class="dock-tab-btn" data-tab="tab-text">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            <span>Text</span>
+          </button>
+          <button class="dock-tab-btn" data-tab="tab-elements">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><circle cx="17.5" cy="6.5" r="3.5"/><path d="M12 21l7-10H5z"/></svg>
+            <span>Shapes</span>
+          </button>
+          <button class="dock-tab-btn" data-tab="tab-filters">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Filters</span>
+          </button>
+        </aside>
+
+        <section class="drawer-shelf">
+
+          <div class="drawer-view" id="panel-tab-uploads">
+            <div class="drawer-header">Uploaded Assets</div>
+            <button class="btn-action" id="btn-studio-upload" style="width: 100%; margin-bottom: 12px;">Upload Media</button>
+            <input type="file" id="studio-file-input" accept="image/*" multiple style="display: none;">
+            <div class="media-gallery-grid" id="studio-gallery"></div>
+          </div>
+
+          <div class="drawer-view" id="panel-tab-text" style="display: none;">
+            <div class="drawer-header">Text Elements</div>
+            <button class="btn-action" id="btn-add-title" style="width: 100%; margin-bottom: 8px; font-size: 14px;">Add Heading</button>
+            <button class="btn-action" id="btn-add-para" style="width: 100%; margin-bottom: 16px;">Add Body Text</button>
+            <div class="drawer-sub-sep">Active Text Settings</div>
+            <div class="row">
+              <label>Font Size:</label>
+              <input type="number" id="text-size" value="48" min="10" max="240">
+            </div>
+            <div class="row">
+              <label>Color:</label>
+              <input type="color" id="text-color" value="#ffffff">
+            </div>
+          </div>
+
+          <div class="drawer-view" id="panel-tab-elements" style="display: none;">
+            <div class="drawer-header">Shapes & Draw</div>
+            <div class="row">
+              <button class="btn-action" id="btn-shape-rect">Rectangle</button>
+              <button class="btn-action" id="btn-shape-circle">Circle</button>
+            </div>
+            <div class="drawer-sub-sep">Freeform Brush</div>
+            <button class="btn-action" id="btn-brush-mode" style="width: 100%; margin-bottom: 10px;">Toggle Brush: OFF</button>
+            <div class="row">
+              <label>Brush Width:</label>
+              <input type="number" id="brush-size" value="6" min="1" max="64">
+            </div>
+            <div class="row">
+              <label>Brush Color:</label>
+              <input type="color" id="brush-color" value="#388bfd">
+            </div>
+          </div>
+
+          <div class="drawer-view" id="panel-tab-filters" style="display: none;">
+            <div class="drawer-header">Selected Image FX</div>
+            <div class="row">
+              <label>Brightness:</label>
+              <input type="number" id="filter-bright" value="0" min="-1" max="1" step="0.05">
+            </div>
+            <div class="row">
+              <label>Contrast:</label>
+              <input type="number" id="filter-contrast" value="0" min="-1" max="1" step="0.05">
+            </div>
+            <div class="row">
+              <label>Pixelate Block:</label>
+              <input type="number" id="filter-pixel-size" value="0" min="0" max="32">
+            </div>
+            <button class="btn-action" id="btn-apply-filter" style="width: 100%; margin-top: 10px;">Apply Filter</button>
+          </div>
+        </section>
+
+        <main class="canvas-viewport-area">
+          <div class="fabric-stage-wrapper">
+            <canvas id="fabric-stage" width="1280" height="720"></canvas>
+          </div>
+        </main>
+      </div>
+
+      <footer class="studio-bottom-deck">
+        <div style="font-size: 11px; color: var(--muted);">Fabric.js 5.3.1 Engine · Zero-Loss Layer Canvas</div>
+        <div class="num-group">
+          <span>Zoom:</span>
+          <input type="range" id="studio-zoom" min="20" max="150" value="65">
+          <span id="zoom-val">65%</span>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- EXPORT MODAL -->
+  <div class="modal-backdrop" id="export-modal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <span class="card-title">Export Artwork</span>
+        <button class="modal-close" id="btn-close-export">&times;</button>
+      </div>
+      <div class="row">
+        <label>Format:</label>
+        <select id="export-mime" style="flex: 1;">
+          <option value="png">PNG (Lossless with Alpha)</option>
+          <option value="jpeg">JPG (Web Compact)</option>
+          <option value="webp">WebP (Optimized)</option>
+          <option value="pdf">PDF Single Page</option>
+          <option value="json">JSON Project Template</option>
+        </select>
+      </div>
+      <button class="btn-action" id="btn-confirm-export" style="width: 100%; margin-top: 14px;">Download Render</button>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script src="js/images.js"></script>
+
+  <div id="studio-context-menu" class="studio-ctx-menu">
+    <div class="ctx-entry" data-action="copy">Copy <span>Ctrl+C</span></div>
+    <div class="ctx-entry" data-action="paste">Paste <span>Ctrl+V</span></div>
+    <div class="ctx-entry" data-action="duplicate">Duplicate <span>Ctrl+D</span></div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-entry" data-action="bring-front">Bring to Front <span>]</span></div>
+    <div class="ctx-entry" data-action="send-back">Send to Back <span>[</span></div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-entry ctx-danger" data-action="delete">Delete <span>Del</span></div>
+  </div>
+</body>
+</html>

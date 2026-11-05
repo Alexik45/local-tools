@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data & Developer Tools - tools://local</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="brand">tools://local</a>
+    <nav>
+      <a href="images.html">Images</a>
+      <a href="videos.html">Videos</a>
+      <a href="audio.html">Audio</a>
+      <a href="data.html" class="active">Data</a>
+      <a href="pdf.html">PDF</a>
+      <a href="files.html">Files</a>
+      <button id="theme-toggle" class="theme-toggle">LIGHT</button>
+    </nav>
+  </header>
+
+  <div class="mode-switcher" style="padding: 12px 24px 0 24px; margin-bottom: 0;">
+    <button class="mode-btn active" data-mode="converter">FAST CONVERTER</button>
+    <button class="mode-btn" data-mode="studio">ADVANCED STUDIO</button>
+  </div>
+
+  <main class="container" id="view-converter">
+    <h1 class="page-title">Format & Crypto Transcoder</h1>
+    <p class="page-desc">Instant Base64 encoding, SHA digests, and bidirectional JSON/CSV transcoding.</p>
+
+    <div class="workspace-panel">
+      <div class="row">
+        <textarea id="conv-input" placeholder="Type or paste payload here..."></textarea>
+      </div>
+
+      <div class="row">
+        <button class="btn-action" id="btn-b64-enc">Base64 Enc</button>
+        <button class="btn-action" id="btn-b64-dec">Base64 Dec</button>
+        <button class="btn-action" id="btn-sha256">SHA-256</button>
+        <button class="btn-action" id="btn-json-csv">JSON to CSV</button>
+        <button class="btn-action" id="btn-csv-json">CSV to JSON</button>
+      </div>
+
+      <div class="row" style="margin-top: 14px;">
+        <textarea id="conv-output" readonly placeholder="Output buffer..."></textarea>
+      </div>
+    </div>
+  </main>
+
+  <main class="container" id="view-studio" style="display: none;">
+    <h1 class="page-title">Data Matrix Studio</h1>
+    <p class="page-desc">In-memory table spreadsheet editor with dynamic rows and bidirectional CSV/JSON export.</p>
+
+    <div class="workspace-panel">
+      <div class="row">
+        <button class="btn-action" id="btn-add-row">+ Add Row</button>
+        <button class="btn-action" id="btn-add-col">+ Add Column</button>
+        <button class="btn-action" id="btn-export-csv">Export CSV</button>
+        <button class="btn-action" id="btn-export-json">Export JSON</button>
+      </div>
+
+      <div style="overflow-x: auto; border: 1px solid var(--border); margin-top: 14px;">
+        <table id="matrix-table" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+          <thead>
+            <tr>
+              <th style="border: 1px solid var(--border); padding: 8px; text-align: left; background: var(--surface-alt);">key</th>
+              <th style="border: 1px solid var(--border); padding: 8px; text-align: left; background: var(--surface-alt);">value</th>
+              <th style="border: 1px solid var(--border); padding: 8px; text-align: left; background: var(--surface-alt);">type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td contenteditable="true" style="border: 1px solid var(--border); padding: 8px;">api_endpoint</td>
+              <td contenteditable="true" style="border: 1px solid var(--border); padding: 8px;">https://local.io</td>
+              <td contenteditable="true" style="border: 1px solid var(--border); padding: 8px;">string</td>
+            </tr>
+            <tr>
+              <td contenteditable="true" style="border: 1px solid var(--border); padding: 8px;">rate_limit</td>
+              <td contenteditable="true" style="border: 1px solid var(--border); padding: 8px;">1000</td>
+              <td contenteditable="true" style="border: 1px solid var(--border); padding: 8px;">number</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/common.js"></script>
+  <script src="js/data.js"></script>
+</body>
+</html>

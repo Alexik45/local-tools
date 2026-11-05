@@ -117,7 +117,3 @@ If these tools saved you time or assisted in your workflow, you can support futu
 ## License
 
 Distributed under the MIT License. See LICENSE for full legal text.
-
-```
-
-```

@@ -2,7 +2,7 @@
 
 A privacy focused, zero telemetry suite of web media processors, developer tools, and in browser editors. All operations execute 100% client side inside browser RAM using native Web APIs, WebAssembly, and hardware accelerated canvases. No cloud synchronization, no analytics tracking, and no paywalls.
 
-Live Demo: https://alexik45.github.io/local_tools/
+Live Demo: https://alexik45.github.io/local-tools/
 
 ## Architecture and Privacy Model
 
@@ -87,7 +87,7 @@ This project consists entirely of static assets and requires no compilation step
 1. Clone the repository:
 
 
-git clone [https://github.com/Alexik45/local_tools.git](https://github.com/Alexik45/local_tools.git)
+git clone [https://github.com/Alexik45/local-tools.git](https://github.com/Alexik45/local-tools.git)
 
 ```cd local_tools```
 

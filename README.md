@@ -71,3 +71,32 @@ This project consists entirely of static assets and requires no compilation step
    ```bash
    git clone [https://github.com/Alexik45/local-tools.git](https://github.com/Alexik45/local-tools.git)
    cd local-tools
+
+   Serve locally with any static web server:
+
+ 
+# Using Python 3
+`python3 -m http.server 8080`
+
+# Or using Node.js / npx
+`npx serve .`
+Open http://localhost:8080 in any modern web browser.
+
+## Contact & Developer Inquiries
+Developer: Alexik45
+
+##My Discord: alex1k45
+
+## Direct Email: contact.alexandr@proton.me
+
+## Personal Portfolio: alexik45.github.io
+
+## Support & Sponsorship
+If these tools saved you time or helped in your workflow, you can support future maintenance and open-source hosting setups:
+
+Ko-fi: ko-fi.com/alexik45
+
+GitHub Sponsors: github.com/sponsors/Alexik45
+
+License
+Distributed under the MIT License. See LICENSE for full legal text.

@@ -1,4 +1,3 @@
-```markdown
 # tools://local — Client-Side Utilities & Studio Suite
 
 A privacy-focused, zero-telemetry suite of web-based media processors, development utilities, and in-browser editors. All operations execute **100% client-side** inside browser RAM using native Web APIs, WebAssembly, and hardware-accelerated canvases. No cloud sync, no analytics tracking, and no paywalls.

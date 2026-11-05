@@ -1,6 +1,7 @@
+```markdown
 # tools://local — Client-Side Utilities & Studio Suite
 
-A privacy-focused, zero-telemetry suite of web-based media processors, development utilities, and in-browser editors. All operations run **100% client-side** inside browser RAM using native Web APIs, WebAssembly, and hardware-accelerated canvases. No cloud sync, no tracking cookies, and no file size paywalls.
+A privacy-focused, zero-telemetry suite of web-based media processors, development utilities, and in-browser editors. All operations execute **100% client-side** inside browser RAM using native Web APIs, WebAssembly, and hardware-accelerated canvases. No cloud sync, no analytics tracking, and no paywalls.
 
 Live Demo: [alexik45.github.io/local-tools](https://alexik45.github.io/local-tools/)
 
@@ -8,24 +9,24 @@ Live Demo: [alexik45.github.io/local-tools](https://alexik45.github.io/local-too
 
 ## Architecture & Privacy Model
 
-Most conventional file utilities upload user payloads to remote backend servers for processing. `tools://local` operates entirely on the client:
+Most web utilities upload user payloads to remote backend servers for processing. `tools://local` operates entirely within the client environment:
 
 * **Zero Network Egress:** Uploaded media, documents, and data buffers never leave your machine.
-* **Ephemeral Memory:** Files reside in volatile browser memory (`Blob`, `ArrayBuffer`, canvas contexts) and are wiped on tab refresh.
-* **Local Session Vault:** Optional offline history tracker using `localStorage`.
+* **Ephemeral Memory:** Files reside strictly in volatile browser memory (`Blob`, `ArrayBuffer`, canvas contexts) and are purged upon tab reload.
+* **Local Session Vault:** Optional offline history tracker using browser `localStorage` with zero remote syncing.
 
 ---
 
 ## Tooling Modules
 
 ### 1. Image Studio & Transcoder (`images.html`)
-* **Fast Converter:** Batch transcoding across PNG, JPG, and WebP with configurable quantization parameters.
+* **Fast Converter:** Batch transcoding across PNG, JPG, and WebP with configurable quality parameters.
 * **Advanced Studio (Canva-style Suite):**
   * Hardware-accelerated canvas layer engine powered by Fabric.js.
   * Direct numeric dimension overrides (width/height pixel scaling).
   * Text formatting, typography scaling, color pickers, and vector shapes.
-  * Real-time image grading: brightness, contrast, pixelation, and filters.
-  * Export options: High-res PNG, JPG, WebP, vector SVG, compiled single-page PDF, and raw JSON layout templates.
+  * Real-time image adjustments: brightness, contrast, pixelation, and filters.
+  * Export options: High-resolution PNG, JPG, WebP, vector SVG, compiled single-page PDF, and raw JSON layout templates.
   * Isolated context menus (Right-Click) and hotkey mappings (`Ctrl+C`, `Ctrl+V`, `Ctrl+D`, `Del`, Layer brackets `[` and `]`).
 
 ### 2. Video Studio & Diagnostics (`videos.html`)
@@ -52,6 +53,35 @@ Most conventional file utilities upload user payloads to remote backend servers 
 
 ---
 
+## Project Structure
+
+```text
+local-tools/
+├── index.html
+├── images.html
+├── videos.html
+├── audio.html
+├── data.html
+├── pdf.html
+├── files.html
+├── LICENSE
+├── README.md
+├── css/
+│   ├── style.css
+│   └── studio.css
+└── js/
+    ├── common.js
+    ├── images.js
+    ├── videos.js
+    ├── audio.js
+    ├── data.js
+    ├── pdf.js
+    └── files.js
+
+```
+
+---
+
 ## Technology Stack
 
 * **Core:** Semantic HTML5, CSS Grid / Flexbox, Vanilla ES6+ JavaScript
@@ -63,40 +93,54 @@ Most conventional file utilities upload user payloads to remote backend servers 
 
 ---
 
-## Local Development & Deployment
+## Local Development
 
 This project consists entirely of static assets and requires no compilation step or runtime server.
 
-1. Clone repository:
-   ```bash
-   git clone [https://github.com/Alexik45/local-tools.git](https://github.com/Alexik45/local-tools.git)
-   cd local-tools
+1. Clone the repository:
+```bash
+git clone [https://github.com/Alexik45/local-tools.git](https://github.com/Alexik45/local-tools.git)
+cd local-tools
 
-   Serve locally with any static web server:
+```
 
- 
+
+2. Serve locally with any static web server:
+```bash
 # Using Python 3
-`python3 -m http.server 8080`
+python3 -m http.server 8080
 
 # Or using Node.js / npx
-`npx serve .`
-Open http://localhost:8080 in any modern web browser.
+npx serve .
 
-## Contact & Developer Inquiries
-Developer: Alexik45
+```
 
-##My Discord: alex1k45
 
-## Direct Email: contact.alexandr@proton.me
+3. Open `http://localhost:8080` in any modern web browser.
 
-## Personal Portfolio: alexik45.github.io
+---
 
-## Support & Sponsorship
-If these tools saved you time or helped in your workflow, you can support future maintenance and open-source hosting setups:
+## Contact & Inquiries
 
-Ko-fi: ko-fi.com/alexik45
+* **Developer:** Alexik (Alexandr Dimitrov)
+* **Discord Community:** `alex1k45`
+* **Direct Email:** [contact.alexandr@proton.me](https://www.google.com/search?q=mailto%3Acontact.alexandr%40proton.me)
+* **Portfolio:** [alexik45.github.io](https://alexik45.github.io/)
 
-GitHub Sponsors: github.com/sponsors/Alexik45
+---
 
-License
-Distributed under the MIT License. See LICENSE for full legal text.
+## Support
+
+If these tools saved you time or assisted in your workflow, you can support future maintenance and open-source projects:
+
+* **Ko-fi:** [ko-fi.com/alexik45](https://ko-fi.com/alexik45#setGoalModal)
+
+---
+
+## License
+
+Distributed under the **MIT License**. See `LICENSE` for full legal text.
+
+```
+
+```

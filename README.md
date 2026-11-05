@@ -86,18 +86,14 @@ This project consists entirely of static assets and requires no compilation step
 
 1. Clone the repository:
 
-```bash
+
 git clone [https://github.com/Alexik45/local_tools.git](https://github.com/Alexik45/local_tools.git)
-cd local_tools
 
-
+```cd local_tools```
 
 2. Serve locally with any static web server:
 
-```bash
-npx serve .
-
-```
+```npx serve .```
 
 3. Open localhost in any modern web browser.
 

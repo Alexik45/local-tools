@@ -1,43 +1,155 @@
 const convIn = document.getElementById('conv-input');
 const convOut = document.getElementById('conv-output');
+let selectedDataTarget = 'json';
 
-document.getElementById('btn-b64-enc').addEventListener('click', () => {
-  try { convOut.value = btoa(unescape(encodeURIComponent(convIn.value))); }
-  catch { convOut.value = 'Error: Invalid sequence for Base64.'; }
+const dataFormats = [
+  { id: 'json', label: 'JSON', desc: 'Pretty object tree' },
+  { id: 'csv', label: 'CSV', desc: 'Comma delimited' },
+  { id: 'tsv', label: 'TSV', desc: 'Tab delimited' },
+  { id: 'xml', label: 'XML', desc: 'Tag markup tree' },
+  { id: 'yaml', label: 'YAML', desc: 'Config syntax' },
+  { id: 'ini', label: 'INI / ENV', desc: 'Key=Value pairs' },
+  { id: 'sql', label: 'SQL', desc: 'INSERT statements' },
+  { id: 'html', label: 'HTML', desc: 'Data table markup' },
+  { id: 'base64', label: 'BASE64', desc: 'UTF-8 encoded' },
+  { id: 'hex', label: 'HEX', desc: 'Byte hex stream' }
+];
+
+initFormatMatrix('data-format-matrix', dataFormats, 'json', (fmt) => {
+  selectedDataTarget = fmt;
+  document.getElementById('data-target-hint').textContent = fmt.toUpperCase();
 });
 
-document.getElementById('btn-b64-dec').addEventListener('click', () => {
-  try { convOut.value = decodeURIComponent(escape(atob(convIn.value.trim()))); }
-  catch { convOut.value = 'Error: Malformed Base64 string.'; }
+bindDropzone('data-dropzone', 'data-file-input', (files) => {
+  const reader = new FileReader();
+  reader.onload = (e) => { convIn.value = e.target.result; };
+  reader.readAsText(files[0]);
 });
 
-document.getElementById('btn-sha256').addEventListener('click', async () => {
-  const bytes = new TextEncoder().encode(convIn.value);
-  const hash = await crypto.subtle.digest('SHA-256', bytes);
-  convOut.value = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-});
+function parseUniversalInput(raw) {
+  const trimmed = raw.trim();
+  if (!trimmed) throw new Error('Empty input buffer');
 
-document.getElementById('btn-json-csv').addEventListener('click', () => {
-  try {
-    const data = JSON.parse(convIn.value);
-    const headers = Object.keys(data[0]);
-    const rows = data.map(r => headers.map(h => JSON.stringify(r[h] ?? '')).join(','));
-    convOut.value = [headers.join(','), ...rows].join('\n');
-  } catch (err) { convOut.value = `Conversion Error: ${err.message}`; }
-});
+  if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+    return JSON.parse(trimmed);
+  }
 
-document.getElementById('btn-csv-json').addEventListener('click', () => {
-  try {
-    const lines = convIn.value.trim().split('\n');
+  if (trimmed.startsWith('<')) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(trimmed, 'text/xml');
+    const items = Array.from(doc.documentElement.children);
+    return items.map(node => {
+      const obj = {};
+      Array.from(node.children).forEach(child => { obj[child.tagName] = child.textContent; });
+      return Object.keys(obj).length ? obj : { value: node.textContent };
+    });
+  }
+
+  if (trimmed.includes('\t') && trimmed.includes('\n')) {
+    const lines = trimmed.split('\n').filter(Boolean);
+    const headers = lines[0].split('\t').map(h => h.trim());
+    return lines.slice(1).map(line => {
+      const vals = line.split('\t');
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = (vals[i] ?? '').trim());
+      return obj;
+    });
+  }
+
+  if (trimmed.includes(',') && trimmed.includes('\n')) {
+    const lines = trimmed.split('\n').filter(Boolean);
     const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-    const result = lines.slice(1).map(l => {
-      const vals = l.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+    return lines.slice(1).map(line => {
+      const vals = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
       const obj = {};
       headers.forEach((h, i) => obj[h] = vals[i] ?? '');
       return obj;
     });
-    convOut.value = JSON.stringify(result, null, 2);
-  } catch (err) { convOut.value = `Parse Error: ${err.message}`; }
+  }
+
+  if (trimmed.includes('=') && !trimmed.includes(':')) {
+    const obj = {};
+    trimmed.split('\n').forEach(line => {
+      const l = line.trim();
+      if (!l || l.startsWith('#') || l.startsWith('[')) return;
+      const idx = l.indexOf('=');
+      if (idx > 0) obj[l.slice(0, idx).trim()] = l.slice(idx + 1).trim();
+    });
+    return obj;
+  }
+
+  return jsyaml.load(trimmed);
+}
+
+function serializeUniversalOutput(data, fmt) {
+  const rows = Array.isArray(data) ? data : [data];
+
+  if (fmt === 'json') return JSON.stringify(data, null, 2);
+  if (fmt === 'yaml') return jsyaml.dump(data);
+
+  if (fmt === 'csv' || fmt === 'tsv') {
+    const sep = fmt === 'csv' ? ',' : '\t';
+    const headers = Object.keys(rows[0] || {});
+    const body = rows.map(r => headers.map(h => fmt === 'csv' ? JSON.stringify(r[h] ?? '') : (r[h] ?? '')).join(sep));
+    return [headers.join(sep), ...body].join('\n');
+  }
+
+  if (fmt === 'xml') {
+    const items = rows.map(r => {
+      const fields = Object.entries(r).map(([k, v]) => `    <${k}>${String(v)}</${k}>`).join('\n');
+      return `  <record>\n${fields}\n  </record>`;
+    }).join('\n');
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<root>\n${items}\n</root>`;
+  }
+
+  if (fmt === 'ini') {
+    return rows.map((r, i) => {
+      const head = rows.length > 1 ? `[section_${i + 1}]\n` : '';
+      return head + Object.entries(r).map(([k, v]) => `${k}=${v}`).join('\n');
+    }).join('\n\n');
+  }
+
+  if (fmt === 'sql') {
+    const headers = Object.keys(rows[0] || {});
+    return rows.map(r => {
+      const vals = headers.map(h => typeof r[h] === 'number' ? r[h] : `'${String(r[h] ?? '').replace(/'/g, "''")}'`).join(', ');
+      return `INSERT INTO dataset (${headers.join(', ')}) VALUES (${vals});`;
+    }).join('\n');
+  }
+
+  if (fmt === 'html') {
+    const headers = Object.keys(rows[0] || {});
+    const ths = headers.map(h => `      <th>${h}</th>`).join('\n');
+    const trs = rows.map(r => `    <tr>\n${headers.map(h => `      <td>${r[h] ?? ''}</td>`).join('\n')}\n    </tr>`).join('\n');
+    return `<table>\n  <thead>\n    <tr>\n${ths}\n    </tr>\n  </thead>\n  <tbody>\n${trs}\n  </tbody>\n</table>`;
+  }
+
+  return String(data);
+}
+
+document.getElementById('btn-run-data-conv').addEventListener('click', () => {
+  try {
+    if (selectedDataTarget === 'base64') {
+      convOut.value = btoa(unescape(encodeURIComponent(convIn.value)));
+      return;
+    }
+    if (selectedDataTarget === 'hex') {
+      const bytes = new TextEncoder().encode(convIn.value);
+      convOut.value = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join(' ');
+      return;
+    }
+    const parsed = parseUniversalInput(convIn.value);
+    convOut.value = serializeUniversalOutput(parsed, selectedDataTarget);
+  } catch (err) {
+    convOut.value = `Conversion Error: ${err.message}`;
+  }
+});
+
+document.getElementById('btn-download-data').addEventListener('click', () => {
+  if (!convOut.value) return;
+  const extMap = { json: 'json', csv: 'csv', tsv: 'tsv', xml: 'xml', yaml: 'yaml', ini: 'ini', sql: 'sql', html: 'html', base64: 'txt', hex: 'txt' };
+  const ext = extMap[selectedDataTarget] || 'txt';
+  downloadBlob(new Blob([convOut.value], { type: 'text/plain;charset=utf-8' }), `converted_data.${ext}`);
 });
 
 const table = document.getElementById('matrix-table');

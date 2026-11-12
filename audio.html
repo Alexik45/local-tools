@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Audio DSP & Tools - tools://local</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 </head>
 <body>
 
@@ -27,22 +28,45 @@
   </div>
 
   <main class="container" id="view-converter">
-    <h1 class="page-title">Audio Fast Transcoder</h1>
-    <p class="page-desc">Batch downmix and export any browser audio file to uncompressed 16-bit WAV.</p>
+    <h1 class="page-title">Universal Audio Converter</h1>
+    <p class="page-desc">Accepts MP3, WAV, FLAC, OGG, AAC, M4A, Opus, AIFF and video containers. Exports MP3, WAV, AIFF, or OGG.</p>
 
     <div class="workspace-panel">
       <div class="dropzone" id="conv-audio-drop">
-        <input type="file" id="conv-audio-input" accept="audio/*" multiple style="display: none;">
-        <p>Drop audio tracks here to batch export WAV</p>
+        <input type="file" id="conv-audio-input" accept="audio/*,video/*,.mp3,.wav,.ogg,.flac,.aac,.m4a,.wma,.opus,.aiff,.webm,.mp4" multiple style="display: none;">
+        <div class="dropzone-main">Drop audio or video files here to transcode</div>
+        <div class="dropzone-sub">Decodes compressed streams and encodes clean target files locally</div>
       </div>
 
-      <div class="row">
-        <label>Channels:</label>
-        <select id="conv-channel-mode">
-          <option value="original">Preserve Channels</option>
-          <option value="mono">Downmix to Mono</option>
-        </select>
-        <button class="btn-action" id="btn-batch-wav">Transcode All Files</button>
+      <div class="queue-list" id="aud-queue-list"></div>
+
+      <div class="format-matrix-label">
+        <span>SELECT TARGET FORMAT</span>
+        <span id="aud-target-hint">MP3</span>
+      </div>
+      <div class="format-matrix" id="aud-format-matrix"></div>
+
+      <div class="dynamic-options-bar">
+        <div class="num-group" id="opt-aud-bitrate">
+          <span>MP3 Bitrate:</span>
+          <select id="aud-mp3-bitrate">
+            <option value="128">128 kbps</option>
+            <option value="192" selected>192 kbps</option>
+            <option value="320">320 kbps</option>
+          </select>
+        </div>
+        <div class="num-group">
+          <span>Channels:</span>
+          <select id="conv-channel-mode">
+            <option value="original">Preserve Channels</option>
+            <option value="mono">Downmix to Mono</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-action" id="btn-batch-wav" style="width: 100%;">Transcode Audio Queue</button>
+      <div class="progress-track" id="aud-progress-track">
+        <div class="progress-fill" id="aud-progress-fill"></div>
       </div>
     </div>
   </main>
@@ -53,8 +77,8 @@
 
     <div class="workspace-panel">
       <div class="dropzone" id="studio-audio-drop">
-        <input type="file" id="studio-audio-input" accept="audio/*" style="display: none;">
-        <p>Drop audio track to load into DSP visualizer</p>
+        <input type="file" id="studio-audio-input" accept="audio/*,video/*" style="display: none;">
+        <div class="dropzone-main">Drop audio track to load into DSP visualizer</div>
       </div>
 
       <div id="audio-studio-panel" style="display: none;">

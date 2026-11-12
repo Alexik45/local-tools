@@ -23,73 +23,73 @@
 
   <main class="container">
     <h1 class="page-title">Client-Side Utilities</h1>
-    <p class="page-desc">In-browser file manipulation and processing. Fast, private, no cloud storage.</p>
+    <p class="page-desc">Universal file transcoding and full-screen creative studios running in browser RAM.</p>
 
     <div class="grid">
       <a href="images.html" class="card">
         <div>
           <div class="card-header-row">
             <span class="card-title">Image Studio</span>
-            <span class="tool-tag">STUDIO</span>
+            <span class="tool-tag">UNIVERSAL</span>
           </div>
-          <p class="card-desc">Batch format transcoder and full-screen Canva-style editor with freeform layers, typography, and filters.</p>
+          <p class="card-desc">Convert between PNG, JPG, WebP, AVIF, HEIC, BMP, ICO, SVG, and PDF or edit layers in full studio.</p>
         </div>
-        <div class="card-footer-tags">WEBP · PNG · JPG · SVG · CANVA SUITE</div>
+        <div class="card-footer-tags">PNG · JPG · WEBP · HEIC · BMP · ICO · SVG</div>
       </a>
 
       <a href="videos.html" class="card">
         <div>
           <div class="card-header-row">
             <span class="card-title">Video Tools</span>
-            <span class="tool-tag">STUDIO</span>
+            <span class="tool-tag">UNIVERSAL</span>
           </div>
-          <p class="card-desc">Fast audio ripper, screen recorder, and timeline workbench with frame stepping and live filters.</p>
+          <p class="card-desc">Transcode MP4, WebM, MOV, MKV, AVI into WebM, animated GIF, MP3, WAV, or capture lossless frames.</p>
         </div>
-        <div class="card-footer-tags">MP4 · WEBM · TRIM · STORYBOARD · REC</div>
+        <div class="card-footer-tags">MP4 · WEBM · GIF · MKV · MOV · MP3 · WAV</div>
       </a>
 
       <a href="audio.html" class="card">
         <div>
           <div class="card-header-row">
             <span class="card-title">Audio DSP</span>
-            <span class="tool-tag">STUDIO</span>
+            <span class="tool-tag">UNIVERSAL</span>
           </div>
-          <p class="card-desc">Lossless 16-bit WAV transcoder, interactive waveform trimmer, peak normalizer, and signal synth.</p>
+          <p class="card-desc">Transcode MP3, WAV, FLAC, OGG, AAC, M4A, AIFF and video audio tracks with waveform DSP editing.</p>
         </div>
-        <div class="card-footer-tags">WAV · MP3 · TRIM · NORMALIZE · SYNTH</div>
+        <div class="card-footer-tags">MP3 · WAV · FLAC · OGG · AIFF · M4A</div>
       </a>
 
       <a href="data.html" class="card">
         <div>
           <div class="card-header-row">
             <span class="card-title">Data & Crypto</span>
-            <span class="tool-tag">STUDIO</span>
+            <span class="tool-tag">UNIVERSAL</span>
           </div>
-          <p class="card-desc">JSON/CSV bidirectional converter, cryptographic SHA digests, and interactive matrix spreadsheet.</p>
+          <p class="card-desc">Bidirectional conversion between JSON, CSV, TSV, XML, YAML, INI, SQL, HTML, Base64, and Hex.</p>
         </div>
-        <div class="card-footer-tags">SHA · JSON/CSV · JWT · BASE64 · MATRIX</div>
+        <div class="card-footer-tags">JSON · CSV · XML · YAML · SQL · INI · TSV</div>
       </a>
 
       <a href="pdf.html" class="card">
         <div>
           <div class="card-header-row">
             <span class="card-title">PDF Studio</span>
-            <span class="tool-tag">STUDIO</span>
+            <span class="tool-tag">UNIVERSAL</span>
           </div>
-          <p class="card-desc">Client-side document merging, page range extraction, visual watermark stamper, and image compile.</p>
+          <p class="card-desc">Convert PDF pages to PNG, JPG, WebP, TXT, Markdown, HTML or merge, split, and watermark documents.</p>
         </div>
-        <div class="card-footer-tags">PDF · MERGE · SPLIT · STAMP · IMAGES</div>
+        <div class="card-footer-tags">PDF · PNG · JPG · TXT · MD · HTML · MERGE</div>
       </a>
 
       <a href="files.html" class="card">
         <div>
           <div class="card-header-row">
             <span class="card-title">Files & Archives</span>
-            <span class="tool-tag">STUDIO</span>
+            <span class="tool-tag">UNIVERSAL</span>
           </div>
-          <p class="card-desc">In-memory ZIP archive packager, byte-level hexadecimal stream inspector, and chunk splitter.</p>
+          <p class="card-desc">Pack or unpack ZIP, TAR, and GZIP archives, encode binary Base64, and inspect hexadecimal dumps.</p>
         </div>
-        <div class="card-footer-tags">ZIP · HEX · HASH · CHUNKS · BYTES</div>
+        <div class="card-footer-tags">ZIP · TAR · GZIP · UNZIP · HEX · BASE64</div>
       </a>
     </div>
 
@@ -101,9 +101,7 @@
       <p class="card-desc" id="vault-desc">Stores exported file history offline in browser memory. No trackers, no server syncing.</p>
       <div id="vault-history" style="display: none; margin-top: 14px;">
         <div class="section-title">RECENT ACTIVITY</div>
-        <div id="vault-list" class="vault-items">
-          <div style="color: var(--muted); font-size: 12px;">No export activity recorded yet.</div>
-        </div>
+        <div id="vault-list"></div>
         <button id="clear-vault" style="background: transparent; border: none; color: var(--muted); font-family: inherit; font-size: 11px; cursor: pointer; margin-top: 10px; text-decoration: underline;">Clear history</button>
       </div>
     </div>
@@ -121,7 +119,7 @@
 
         <div class="contact-card" id="discord-card">
           <div class="contact-details">
-            <span class="contact-type">COMMUNITY</span>
+            <span class="contact-type">DISCORD</span>
             <span class="contact-value">alex1k45</span>
           </div>
           <button type="button" class="action-tag" id="copy-discord-btn">Copy Tag</button>

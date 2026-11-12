@@ -6,6 +6,7 @@
   <title>PDF Studio & Tools - tools://local</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
 
@@ -28,15 +29,28 @@
   </div>
 
   <main class="container" id="view-converter">
-    <h1 class="page-title">PDF Fast Converter</h1>
-    <p class="page-desc">Bundle images directly into a single compiled PDF file.</p>
+    <h1 class="page-title">Universal PDF & Document Converter</h1>
+    <p class="page-desc">Convert PDF documents to PNG, JPG, WebP, TXT, Markdown, HTML or compile images and text into PDF.</p>
 
     <div class="workspace-panel">
       <div class="dropzone" id="conv-pdf-drop">
-        <input type="file" id="conv-pdf-input" accept="image/jpeg,image/png" multiple style="display: none;">
-        <p>Drop JPG/PNG images here to bundle into PDF</p>
+        <input type="file" id="conv-pdf-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.bmp,.txt,.md,.html,.json,.csv" multiple style="display: none;">
+        <div class="dropzone-main">Drop PDF documents, images, or text files here</div>
+        <div class="dropzone-sub">Renders PDF pages to raster images or extracts clean text payloads</div>
       </div>
-      <button class="btn-action" id="btn-compile-pdf">Create PDF Document</button>
+
+      <div class="queue-list" id="pdf-queue-list"></div>
+
+      <div class="format-matrix-label">
+        <span>SELECT TARGET FORMAT</span>
+        <span id="pdf-target-hint">PDF</span>
+      </div>
+      <div class="format-matrix" id="pdf-format-matrix"></div>
+
+      <button class="btn-action" id="btn-compile-pdf" style="width: 100%;">Convert Document Queue</button>
+      <div class="progress-track" id="pdf-progress-track">
+        <div class="progress-fill" id="pdf-progress-fill"></div>
+      </div>
     </div>
   </main>
 
@@ -47,7 +61,7 @@
     <div class="workspace-panel">
       <div class="dropzone" id="studio-pdf-drop">
         <input type="file" id="studio-pdf-input" accept="application/pdf" multiple style="display: none;">
-        <p>Drop PDF files here to edit or merge</p>
+        <div class="dropzone-main">Drop PDF files here to edit or merge</div>
       </div>
 
       <div id="studio-pdf-ctrls" style="display: none;">

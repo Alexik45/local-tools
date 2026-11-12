@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data & Developer Tools - tools://local</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 </head>
 <body>
 
@@ -27,24 +28,32 @@
   </div>
 
   <main class="container" id="view-converter">
-    <h1 class="page-title">Format & Crypto Transcoder</h1>
-    <p class="page-desc">Instant Base64 encoding, SHA digests, and bidirectional JSON/CSV transcoding.</p>
+    <h1 class="page-title">Universal Data & Config Converter</h1>
+    <p class="page-desc">Bidirectional conversion across JSON, CSV, TSV, XML, YAML, INI, SQL, HTML, Base64, and Hex.</p>
 
     <div class="workspace-panel">
-      <div class="row">
-        <textarea id="conv-input" placeholder="Type or paste payload here..."></textarea>
+      <div class="dropzone" id="data-dropzone" style="padding: 20px;">
+        <input type="file" id="data-file-input" accept=".json,.csv,.tsv,.xml,.yaml,.yml,.ini,.env,.toml,.sql,.html,.txt,.md" style="display: none;">
+        <div class="dropzone-main">Drop structured file (.json, .csv, .xml, .yaml, .ini, .tsv) or paste below</div>
       </div>
 
       <div class="row">
-        <button class="btn-action" id="btn-b64-enc">Base64 Enc</button>
-        <button class="btn-action" id="btn-b64-dec">Base64 Dec</button>
-        <button class="btn-action" id="btn-sha256">SHA-256</button>
-        <button class="btn-action" id="btn-json-csv">JSON to CSV</button>
-        <button class="btn-action" id="btn-csv-json">CSV to JSON</button>
+        <textarea id="conv-input" placeholder='[{"id": 1, "service": "relay", "port": 8080}]'></textarea>
+      </div>
+
+      <div class="format-matrix-label">
+        <span>SELECT TARGET FORMAT</span>
+        <span id="data-target-hint">JSON</span>
+      </div>
+      <div class="format-matrix" id="data-format-matrix"></div>
+
+      <div class="row">
+        <button class="btn-action" id="btn-run-data-conv" style="flex: 1;">Convert Data</button>
+        <button class="btn-action" id="btn-download-data" style="background: transparent; color: var(--text);">Download Result File</button>
       </div>
 
       <div class="row" style="margin-top: 14px;">
-        <textarea id="conv-output" readonly placeholder="Output buffer..."></textarea>
+        <textarea id="conv-output" readonly placeholder="Converted output buffer..."></textarea>
       </div>
     </div>
   </main>

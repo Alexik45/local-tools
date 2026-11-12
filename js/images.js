@@ -1,43 +1,112 @@
-const convDrop = document.getElementById('conv-dropzone');
-const convInput = document.getElementById('conv-file-input');
-const convFeedback = document.getElementById('conv-feedback');
 let batchFiles = [];
+let selectedImgTarget = 'webp';
 
-convDrop.addEventListener('click', () => convInput.click());
-convInput.addEventListener('change', () => {
-  batchFiles = Array.from(convInput.files);
-  convFeedback.textContent = `${batchFiles.length} file(s) selected for processing.`;
+const imgFormats = [
+  { id: 'webp', label: 'WEBP', desc: 'Next-gen web' },
+  { id: 'png', label: 'PNG', desc: 'Lossless alpha' },
+  { id: 'jpg', label: 'JPG', desc: 'Photo standard' },
+  { id: 'avif', label: 'AVIF', desc: 'High compression' },
+  { id: 'bmp', label: 'BMP', desc: '24-bit raw bitmap' },
+  { id: 'ico', label: 'ICO', desc: 'Windows icon' },
+  { id: 'svg', label: 'SVG', desc: 'Vector wrapper' },
+  { id: 'pdf', label: 'PDF', desc: 'Document page' }
+];
+
+initFormatMatrix('img-format-matrix', imgFormats, 'webp', (fmt) => {
+  selectedImgTarget = fmt;
+  document.getElementById('img-target-hint').textContent = fmt.toUpperCase();
+  document.getElementById('opt-img-quality').style.display = ['webp', 'jpg', 'avif'].includes(fmt) ? 'inline-flex' : 'none';
+  document.getElementById('opt-img-ico').style.display = fmt === 'ico' ? 'inline-flex' : 'none';
 });
 
-document.getElementById('btn-run-batch').addEventListener('click', () => {
-  if (batchFiles.length === 0) return;
-  const targetFmt = document.getElementById('conv-format').value;
-  const quality = parseInt(document.getElementById('conv-quality-num').value, 10) / 100;
+bindDropzone('conv-dropzone', 'conv-file-input', (files) => {
+  batchFiles = files;
+  renderFileQueue('img-queue-list', batchFiles);
+});
 
-  batchFiles.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const c = document.createElement('canvas');
-        c.width = img.width;
-        c.height = img.height;
-        const ctx = c.getContext('2d');
-        if (targetFmt === 'image/jpeg') {
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, c.width, c.height);
-        }
-        ctx.drawImage(img, 0, 0);
-        c.toBlob(blob => {
-          const ext = targetFmt.split('/')[1].replace('jpeg', 'jpg');
-          const base = file.name.substring(0, file.name.lastIndexOf('.')) || 'converted';
-          downloadBlob(blob, `${base}_transcoded.${ext}`);
-        }, targetFmt, quality);
-      };
-      img.src = e.target.result;
+async function decodeAnyImageFile(file) {
+  const lower = file.name.toLowerCase();
+  let sourceBlob = file;
+  if (lower.endsWith('.heic') || lower.endsWith('.heif')) {
+    sourceBlob = await heic2any({ blob: file, toType: 'image/png' });
+    if (Array.isArray(sourceBlob)) sourceBlob = sourceBlob[0];
+  }
+  const url = URL.createObjectURL(sourceBlob);
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
     };
-    reader.readAsDataURL(file);
+    img.onerror = reject;
+    img.src = url;
   });
+}
+
+document.getElementById('btn-run-batch').addEventListener('click', async () => {
+  if (batchFiles.length === 0) return;
+  const quality = parseInt(document.getElementById('conv-quality-num').value, 10) / 100;
+  const scale = parseFloat(document.getElementById('conv-scale-factor').value) || 1;
+  const track = document.getElementById('img-progress-track');
+  const fill = document.getElementById('img-progress-fill');
+  track.style.display = 'block';
+  fill.style.width = '0%';
+
+  for (let i = 0; i < batchFiles.length; i++) {
+    const file = batchFiles[i];
+    updateQueueStatus('img-queue-list', i, 'PROCESSING', 'working');
+
+    try {
+      const img = await decodeAnyImageFile(file);
+      const w = Math.max(1, Math.round(img.width * scale));
+      const h = Math.max(1, Math.round(img.height * scale));
+      const c = document.createElement('canvas');
+      c.width = w;
+      c.height = h;
+      const ctx = c.getContext('2d');
+
+      if (selectedImgTarget === 'jpg' || selectedImgTarget === 'bmp') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+      }
+      ctx.drawImage(img, 0, 0, w, h);
+
+      const base = file.name.substring(0, file.name.lastIndexOf('.')) || 'image';
+
+      if (selectedImgTarget === 'bmp') {
+        downloadBlob(canvasToBmpBlob(c), `${base}.bmp`);
+      } else if (selectedImgTarget === 'ico') {
+        const icoSize = parseInt(document.getElementById('conv-ico-size').value, 10) || 64;
+        const icoBlob = await canvasToIcoBlob(c, icoSize);
+        downloadBlob(icoBlob, `${base}.ico`);
+      } else if (selectedImgTarget === 'svg') {
+        const pngData = c.toDataURL('image/png');
+        const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><image href="${pngData}" width="${w}" height="${h}"/></svg>`;
+        downloadBlob(new Blob([svgStr], { type: 'image/svg+xml' }), `${base}.svg`);
+      } else if (selectedImgTarget === 'pdf') {
+        const { PDFDocument } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const jpgUri = c.toDataURL('image/jpeg', 0.94);
+        const bytes = await fetch(jpgUri).then(r => r.arrayBuffer());
+        const embedded = await pdfDoc.embedJpg(bytes);
+        const page = pdfDoc.addPage([w, h]);
+        page.drawImage(embedded, { x: 0, y: 0, width: w, height: h });
+        const pdfBytes = await pdfDoc.save();
+        downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), `${base}.pdf`);
+      } else {
+        const mimeMap = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', avif: 'image/avif' };
+        const mime = mimeMap[selectedImgTarget] || 'image/png';
+        const blob = await new Promise(res => c.toBlob(res, mime, quality));
+        downloadBlob(blob, `${base}.${selectedImgTarget}`);
+      }
+
+      updateQueueStatus('img-queue-list', i, 'DONE', 'done');
+    } catch {
+      updateQueueStatus('img-queue-list', i, 'ERROR');
+    }
+
+    fill.style.width = `${Math.round(((i + 1) / batchFiles.length) * 100)}%`;
+  }
 });
 
 const canvas = new fabric.Canvas('fabric-stage', {
@@ -88,8 +157,13 @@ const studioFileInput = document.getElementById('studio-file-input');
 const studioGallery = document.getElementById('studio-gallery');
 
 studioUploadBtn.addEventListener('click', () => studioFileInput.click());
-studioFileInput.addEventListener('change', () => {
-  Array.from(studioFileInput.files).forEach(file => {
+studioFileInput.addEventListener('change', async () => {
+  for (const file of Array.from(studioFileInput.files)) {
+    let targetBlob = file;
+    if (file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif')) {
+      targetBlob = await heic2any({ blob: file, toType: 'image/png' });
+      if (Array.isArray(targetBlob)) targetBlob = targetBlob[0];
+    }
     const reader = new FileReader();
     reader.onload = (e) => {
       const dataUri = e.target.result;
@@ -110,8 +184,8 @@ studioFileInput.addEventListener('change', () => {
         }, { crossOrigin: 'anonymous' });
       });
     };
-    reader.readAsDataURL(file);
-  });
+    reader.readAsDataURL(targetBlob);
+  }
 });
 
 document.getElementById('btn-add-title').addEventListener('click', () => {
@@ -267,6 +341,25 @@ document.getElementById('btn-confirm-export').addEventListener('click', async ()
     return;
   }
 
+  if (fmt === 'svg') {
+    downloadBlob(new Blob([canvas.toSVG()], { type: 'image/svg+xml' }), `${title}.svg`);
+    exportModal.classList.remove('open');
+    return;
+  }
+
+  if (fmt === 'bmp') {
+    downloadBlob(canvasToBmpBlob(canvas.lowerCanvasEl), `${title}.bmp`);
+    exportModal.classList.remove('open');
+    return;
+  }
+
+  if (fmt === 'ico') {
+    const icoBlob = await canvasToIcoBlob(canvas.lowerCanvasEl, 64);
+    downloadBlob(icoBlob, `${title}.ico`);
+    exportModal.classList.remove('open');
+    return;
+  }
+
   if (fmt === 'pdf') {
     const { PDFDocument } = PDFLib;
     const doc = await PDFDocument.create();
@@ -328,7 +421,6 @@ window.setupEditorEnvironment({
       canvas.setActiveObject(targetObj);
       canvas.renderAll();
     }
-    const hasActive = !!canvas.getActiveObject();
     return [
       { label: 'Copy', shortcut: 'Ctrl+C', action: copyObject },
       { label: 'Paste', shortcut: 'Ctrl+V', action: pasteObject },

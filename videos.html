@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Video Tools & Studio - tools://local</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 </head>
 <body>
 
@@ -27,31 +28,59 @@
   </div>
 
   <main class="container" id="view-converter">
-    <h1 class="page-title">Video Fast Tools</h1>
-    <p class="page-desc">High-speed client-side track extraction and real-time screen capture.</p>
+    <h1 class="page-title">Universal Video Converter</h1>
+    <p class="page-desc">Accepts MP4, WebM, MOV, MKV, AVI, M4V, OGV and converts to WebM, MP4, Animated GIF, MP3, WAV, or PNG.</p>
 
     <div class="workspace-panel">
       <div class="dropzone" id="conv-video-drop">
-        <input type="file" id="conv-video-input" accept="video/*" style="display: none;">
-        <p>Drop video here for instant track extraction</p>
+        <input type="file" id="conv-video-input" accept="video/*,.mp4,.webm,.mkv,.mov,.avi,.flv,.wmv,.m4v,.3gp,.ogv,.ts" multiple style="display: none;">
+        <div class="dropzone-main">Drop video files here or click to browse</div>
+        <div class="dropzone-sub">Supports transcoding, animated GIF rendering, and audio track extraction</div>
+      </div>
+
+      <div class="queue-list" id="vid-queue-list"></div>
+
+      <div class="format-matrix-label">
+        <span>SELECT TARGET FORMAT</span>
+        <span id="vid-target-hint">WEBM</span>
+      </div>
+      <div class="format-matrix" id="vid-format-matrix"></div>
+
+      <div class="dynamic-options-bar" id="vid-options-bar">
+        <div class="num-group" id="opt-vid-gif" style="display: none;">
+          <span>GIF Width:</span>
+          <input type="number" id="vid-gif-width" value="320" min="120" max="800" style="width: 70px;">
+          <span>px · FPS:</span>
+          <input type="number" id="vid-gif-fps" value="8" min="2" max="20" style="width: 56px;">
+        </div>
+        <div class="num-group" id="opt-vid-res">
+          <span>Output Scale:</span>
+          <select id="vid-scale">
+            <option value="1">100% Original</option>
+            <option value="0.75">75%</option>
+            <option value="0.5">50%</option>
+          </select>
+        </div>
       </div>
 
       <div class="row">
-        <button class="btn-action" id="btn-extract-wav">Extract Raw WAV Audio</button>
-        <button class="btn-action" id="btn-record-screen">Record Screen to WebM</button>
+        <button class="btn-action" id="btn-run-vid-batch" style="flex: 1;">Convert Video Queue</button>
+        <button class="btn-action" id="btn-record-screen" style="background: transparent; color: var(--text);">Record Screen (WebM)</button>
       </div>
-      <div id="conv-video-status" style="color: var(--muted); font-size: 11px; margin-top: 8px;"></div>
+      <div class="progress-track" id="vid-progress-track">
+        <div class="progress-fill" id="vid-progress-fill"></div>
+      </div>
     </div>
   </main>
 
   <main class="container" id="view-studio" style="display: none;">
     <h1 class="page-title">Video Studio Workbench</h1>
-    <p class="page-desc">Frame-stepping canvas inspector, numeric selection trimmer, and filter passes.</p>
+    <p class="page-desc">Frame-stepping canvas inspector, numeric selection trimmer, and lossless frame capture.</p>
 
     <div class="workspace-panel">
       <div class="dropzone" id="studio-video-drop">
-        <input type="file" id="studio-video-input" accept="video/*" style="display: none;">
-        <p>Drop video file to mount player workbench</p>
+        <input type="file" id="studio-video-input" accept="video/*,.mp4,.webm,.mkv,.mov,.avi,.m4v,.ogv" style="display: none;">
+        <div class="dropzone-main">Drop video file to mount player workbench</div>
       </div>
 
       <div id="video-workbench" style="display: none;">

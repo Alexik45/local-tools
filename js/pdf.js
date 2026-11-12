@@ -1,32 +1,129 @@
-const convDrop = document.getElementById('conv-pdf-drop');
-const convInput = document.getElementById('conv-pdf-input');
-let rawImages = [];
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-convDrop.addEventListener('click', () => convInput.click());
-convInput.addEventListener('change', () => {
-  rawImages = Array.from(convInput.files);
-  convDrop.querySelector('p').textContent = `${rawImages.length} image(s) queued.`;
+let rawDocFiles = [];
+let selectedPdfTarget = 'pdf';
+
+const pdfFormats = [
+  { id: 'pdf', label: 'PDF', desc: 'Compile to PDF' },
+  { id: 'png', label: 'PNG', desc: 'PDF pages to PNG' },
+  { id: 'jpg', label: 'JPG', desc: 'PDF pages to JPG' },
+  { id: 'webp', label: 'WEBP', desc: 'PDF pages to WebP' },
+  { id: 'txt', label: 'TXT', desc: 'Extract plain text' },
+  { id: 'md', label: 'MARKDOWN', desc: 'Structured text' },
+  { id: 'html', label: 'HTML', desc: 'Standalone webpage' }
+];
+
+initFormatMatrix('pdf-format-matrix', pdfFormats, 'pdf', (fmt) => {
+  selectedPdfTarget = fmt;
+  document.getElementById('pdf-target-hint').textContent = fmt.toUpperCase();
 });
 
-document.getElementById('btn-compile-pdf').addEventListener('click', async () => {
-  if (rawImages.length === 0) return alert('Select images first.');
-  const { PDFDocument } = PDFLib;
-  const pdfDoc = await PDFDocument.create();
+bindDropzone('conv-pdf-drop', 'conv-pdf-input', (files) => {
+  rawDocFiles = files;
+  renderFileQueue('pdf-queue-list', rawDocFiles);
+});
 
-  for (const file of rawImages) {
-    const bytes = await file.arrayBuffer();
-    let img;
-    if (file.type === 'image/jpeg' || file.name.endsWith('.jpg')) {
-      img = await pdfDoc.embedJpg(bytes);
-    } else {
-      img = await pdfDoc.embedPng(bytes);
+async function extractPdfText(arrayBuffer) {
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    const strings = content.items.map(item => item.str);
+    fullText += `--- Page ${p} ---\n${strings.join(' ')}\n\n`;
+  }
+  return fullText;
+}
+
+async function renderPdfToImages(arrayBuffer, baseName, fmt) {
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const mime = fmt === 'jpg' ? 'image/jpeg' : (fmt === 'webp' ? 'image/webp' : 'image/png');
+
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const page = await pdf.getPage(p);
+    const viewport = page.getViewport({ scale: 2.0 });
+    const c = document.createElement('canvas');
+    c.width = viewport.width;
+    c.height = viewport.height;
+    const ctx = c.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    const blob = await new Promise(res => c.toBlob(res, mime, 0.92));
+    downloadBlob(blob, `${baseName}_page_${p}.${fmt}`);
+  }
+}
+
+document.getElementById('btn-compile-pdf').addEventListener('click', async () => {
+  if (rawDocFiles.length === 0) return;
+  const track = document.getElementById('pdf-progress-track');
+  const fill = document.getElementById('pdf-progress-fill');
+  track.style.display = 'block';
+  fill.style.width = '0%';
+
+  if (selectedPdfTarget === 'pdf') {
+    const { PDFDocument, StandardFonts } = PDFLib;
+    const pdfDoc = await PDFDocument.create();
+    const font = await pdfDoc.embedFont(StandardFonts.Courier);
+
+    for (let i = 0; i < rawDocFiles.length; i++) {
+      const file = rawDocFiles[i];
+      updateQueueStatus('pdf-queue-list', i, 'PROCESSING', 'working');
+
+      if (file.type.startsWith('image/')) {
+        const bytes = await file.arrayBuffer();
+        const img = (file.type === 'image/jpeg' || file.name.toLowerCase().endsWith('.jpg'))
+          ? await pdfDoc.embedJpg(bytes)
+          : await pdfDoc.embedPng(bytes);
+        const page = pdfDoc.addPage([img.width, img.height]);
+        page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+      } else if (file.type === 'application/pdf') {
+        const src = await PDFDocument.load(await file.arrayBuffer());
+        const copied = await pdfDoc.copyPages(src, src.getPageIndices());
+        copied.forEach(p => pdfDoc.addPage(p));
+      } else {
+        const text = await file.text();
+        const page = pdfDoc.addPage([595, 842]);
+        const lines = text.split('\n').slice(0, 48);
+        lines.forEach((line, idx) => {
+          page.drawText(line.slice(0, 85), { x: 40, y: 790 - (idx * 15), size: 10, font });
+        });
+      }
+
+      updateQueueStatus('pdf-queue-list', i, 'DONE', 'done');
+      fill.style.width = `${Math.round(((i + 1) / rawDocFiles.length) * 100)}%`;
     }
-    const page = pdfDoc.addPage([img.width, img.height]);
-    page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+
+    const pdfBytes = await pdfDoc.save();
+    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'compiled_document.pdf');
+    return;
   }
 
-  const pdfBytes = await pdfDoc.save();
-  downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'compiled_images.pdf');
+  for (let i = 0; i < rawDocFiles.length; i++) {
+    const file = rawDocFiles[i];
+    const base = file.name.substring(0, file.name.lastIndexOf('.')) || 'document';
+    updateQueueStatus('pdf-queue-list', i, 'PROCESSING', 'working');
+
+    try {
+      const buf = await file.arrayBuffer();
+      if (['png', 'jpg', 'webp'].includes(selectedPdfTarget)) {
+        await renderPdfToImages(buf, base, selectedPdfTarget);
+      } else {
+        const text = file.type === 'application/pdf' ? await extractPdfText(buf) : await file.text();
+        if (selectedPdfTarget === 'txt') {
+          downloadBlob(new Blob([text], { type: 'text/plain' }), `${base}.txt`);
+        } else if (selectedPdfTarget === 'md') {
+          const md = `# ${base}\n\n${text}`;
+          downloadBlob(new Blob([md], { type: 'text/markdown' }), `${base}.md`);
+        } else if (selectedPdfTarget === 'html') {
+          const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${base}</title></head><body><pre style="font-family:monospace;white-space:pre-wrap;">${text}</pre></body></html>`;
+          downloadBlob(new Blob([html], { type: 'text/html' }), `${base}.html`);
+        }
+      }
+      updateQueueStatus('pdf-queue-list', i, 'DONE', 'done');
+    } catch {
+      updateQueueStatus('pdf-queue-list', i, 'ERROR');
+    }
+    fill.style.width = `${Math.round(((i + 1) / rawDocFiles.length) * 100)}%`;
+  }
 });
 
 const studioDrop = document.getElementById('studio-pdf-drop');

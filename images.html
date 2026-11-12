@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/studio.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 </head>
 <body>
 
@@ -29,63 +30,80 @@
     <button class="mode-btn" data-mode="studio">ADVANCED STUDIO</button>
   </div>
 
-  <!-- REŽIM 1: FAST CONVERTER -->
   <main class="container" id="view-converter">
-    <h1 class="page-title">Image Fast Converter</h1>
-    <p class="page-desc">High-speed client-side batch format conversion and compression.</p>
+    <h1 class="page-title">Universal Image Converter</h1>
+    <p class="page-desc">Accepts PNG, JPG, WebP, HEIC, HEIF, AVIF, BMP, ICO, SVG, GIF and transcodes locally.</p>
 
     <div class="workspace-panel">
       <div class="dropzone" id="conv-dropzone">
-        <input type="file" id="conv-file-input" accept="image/*" multiple style="display: none;">
-        <p>Drop images here or click to batch transcode</p>
+        <input type="file" id="conv-file-input" accept="image/*,.heic,.heif,.svg,.bmp,.ico,.tiff,.tif,.avif,.gif,.webp,.png,.jpg,.jpeg" multiple style="display: none;">
+        <div class="dropzone-main">Drop any image files here or click to browse</div>
+        <div class="dropzone-sub">Supports batch queues including Apple HEIC and vector SVG</div>
       </div>
 
-      <div class="row">
-        <label>Format:</label>
-        <select id="conv-format">
-          <option value="image/webp">WebP (Modern Compact)</option>
-          <option value="image/png">PNG (Lossless)</option>
-          <option value="image/jpeg">JPG (Standard)</option>
-        </select>
+      <div class="queue-list" id="img-queue-list"></div>
 
-        <div class="num-group">
+      <div class="format-matrix-label">
+        <span>SELECT TARGET FORMAT</span>
+        <span id="img-target-hint">WEBP</span>
+      </div>
+      <div class="format-matrix" id="img-format-matrix"></div>
+
+      <div class="dynamic-options-bar" id="img-options-bar">
+        <div class="num-group" id="opt-img-quality">
           <span>Quality:</span>
-          <input type="number" id="conv-quality-num" value="90" min="5" max="100" style="width: 60px;">
+          <input type="number" id="conv-quality-num" value="90" min="5" max="100" style="width: 64px;">
           <span>%</span>
         </div>
-
-        <button class="btn-action" id="btn-run-batch">Convert and Download All</button>
+        <div class="num-group" id="opt-img-ico" style="display: none;">
+          <span>Icon Resolution:</span>
+          <select id="conv-ico-size">
+            <option value="32">32 x 32 px</option>
+            <option value="64" selected>64 x 64 px</option>
+            <option value="128">128 x 128 px</option>
+            <option value="256">256 x 256 px</option>
+          </select>
+        </div>
+        <div class="num-group">
+          <span>Scale:</span>
+          <select id="conv-scale-factor">
+            <option value="1">100% Native</option>
+            <option value="0.75">75%</option>
+            <option value="0.5">50%</option>
+            <option value="0.25">25%</option>
+          </select>
+        </div>
       </div>
-      <div id="conv-feedback" style="color: var(--muted); font-size: 11px; margin-top: 8px;"></div>
+
+      <button class="btn-action" id="btn-run-batch" style="width: 100%;">Transcode and Download Queue</button>
+      <div class="progress-track" id="img-progress-track">
+        <div class="progress-fill" id="img-progress-fill"></div>
+      </div>
     </div>
   </main>
 
-  <!-- REŽIM 2: ADVANCED STUDIO (CANVA SUITE) -->
   <div id="view-studio" style="display: none;">
     <div class="studio-fullscreen-layout">
-
       <div class="studio-sub-topbar">
         <div class="studio-sub-left">
           <input type="text" id="project-title" value="Project_Design_1" style="width: 160px; font-weight: 700;">
           <div class="num-group" style="margin-left: 8px;">
             <span>Canvas:</span>
             <input type="number" id="canvas-width" value="1280" style="width: 64px;">
-            <span>&times;</span>
+            <span>x</span>
             <input type="number" id="canvas-height" value="720" style="width: 64px;">
             <button class="sub-btn" id="btn-resize-canvas">Resize</button>
           </div>
         </div>
-
         <div class="studio-sub-right">
-          <button class="sub-btn" id="btn-undo">&#8630; Undo</button>
-          <button class="sub-btn" id="btn-redo">&#8631; Redo</button>
+          <button class="sub-btn" id="btn-undo">Undo</button>
+          <button class="sub-btn" id="btn-redo">Redo</button>
           <button class="sub-btn" id="btn-clear-canvas" style="color: #ff5555;">Clear</button>
           <button class="btn-export-accent" id="btn-open-export">Export Artwork</button>
         </div>
       </div>
 
       <div class="studio-main-body">
-
         <aside class="dock-sidebar">
           <button class="dock-tab-btn active" data-tab="tab-uploads">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -106,11 +124,10 @@
         </aside>
 
         <section class="drawer-shelf">
-
           <div class="drawer-view" id="panel-tab-uploads">
             <div class="drawer-header">Uploaded Assets</div>
             <button class="btn-action" id="btn-studio-upload" style="width: 100%; margin-bottom: 12px;">Upload Media</button>
-            <input type="file" id="studio-file-input" accept="image/*" multiple style="display: none;">
+            <input type="file" id="studio-file-input" accept="image/*,.heic,.heif,.svg,.bmp" multiple style="display: none;">
             <div class="media-gallery-grid" id="studio-gallery"></div>
           </div>
 
@@ -183,7 +200,6 @@
     </div>
   </div>
 
-  <!-- EXPORT MODAL -->
   <div class="modal-backdrop" id="export-modal">
     <div class="modal-box">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
@@ -196,6 +212,9 @@
           <option value="png">PNG (Lossless with Alpha)</option>
           <option value="jpeg">JPG (Web Compact)</option>
           <option value="webp">WebP (Optimized)</option>
+          <option value="bmp">BMP (24-bit Uncompressed)</option>
+          <option value="ico">ICO (Windows Icon 64x64)</option>
+          <option value="svg">SVG (Vector Markup)</option>
           <option value="pdf">PDF Single Page</option>
           <option value="json">JSON Project Template</option>
         </select>
@@ -206,16 +225,5 @@
 
   <script src="js/common.js"></script>
   <script src="js/images.js"></script>
-
-  <div id="studio-context-menu" class="studio-ctx-menu">
-    <div class="ctx-entry" data-action="copy">Copy <span>Ctrl+C</span></div>
-    <div class="ctx-entry" data-action="paste">Paste <span>Ctrl+V</span></div>
-    <div class="ctx-entry" data-action="duplicate">Duplicate <span>Ctrl+D</span></div>
-    <div class="ctx-divider"></div>
-    <div class="ctx-entry" data-action="bring-front">Bring to Front <span>]</span></div>
-    <div class="ctx-entry" data-action="send-back">Send to Back <span>[</span></div>
-    <div class="ctx-divider"></div>
-    <div class="ctx-entry ctx-danger" data-action="delete">Delete <span>Del</span></div>
-  </div>
 </body>
 </html>
